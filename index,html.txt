@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Booking Mongolia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</head>
+
+<body>
+
+<h1>Booking Mongolia</h1>
+
+<h2>Hotels</h2>
+<div id="hotels"></div>
+
+<h2>Cars</h2>
+<div id="cars"></div>
+
+<script>
+const supabase = supabase.createClient(
+  "https://ebpjetcuabubihzximbb.supabase.co",
+  "YOUR_ANON_KEY"
+);
+
+async function loadHotels(){
+  const { data } = await supabase
+    .from('property_submissions')
+    .select('*')
+    .eq('status','approved');
+
+  const el = document.getElementById('hotels');
+  data.forEach(item=>{
+    el.innerHTML += `
+      <div>
+        <a href="hotel.html?id=${item.id}">
+          <h3>${item.name}</h3>
+        </a>
+        <img src="${item.image_url}" width="200">
+      </div>
+    `;
+  });
+}
+
+async function loadCars(){
+  const { data } = await supabase
+    .from('vehicle_submissions')
+    .select('*')
+    .eq('status','approved');
+
+  const el = document.getElementById('cars');
+  data.forEach(item=>{
+    el.innerHTML += `
+      <div>
+        <h3>${item.title}</h3>
+        <img src="${item.image_url}" width="200">
+      </div>
+    `;
+  });
+}
+
+loadHotels();
+loadCars();
+</script>
+
+</body>
+</html>
