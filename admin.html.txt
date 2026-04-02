@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</head>
+
+<body>
+
+<h2>Pending Hotels</h2>
+<div id="hotels"></div>
+
+<script>
+const supabase = supabase.createClient(
+  "https://ebpjetcuabubihzximbb.supabase.co",
+  "YOUR_ANON_KEY"
+);
+
+async function loadHotels(){
+  const { data } = await supabase
+    .from('property_submissions')
+    .select('*')
+    .eq('status','pending');
+
+  const el = document.getElementById('hotels');
+  el.innerHTML = '';
+
+  data.forEach(item=>{
+    el.innerHTML += `
+      <div>
+        <h3>${item.name}</h3>
+        <button onclick="approve(${item.id})">Approve</button>
+      </div>
+    `;
+  });
+}
+
+async function approve(id){
+  await supabase
+    .from('property_submissions')
+    .update({ status: 'approved' })
+    .eq('id', id);
+
+  loadHotels();
+}
+
+loadHotels();
+</script>
+
+</body>
+</html>
